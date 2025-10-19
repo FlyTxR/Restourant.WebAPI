@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    partial class SqlContextModelSnapshot : ModelSnapshot
+    [Migration("20251019150113_AddBookingTimeField")]
+    partial class AddBookingTimeField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,81 +206,6 @@ namespace DataAccess.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("MenuItems");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.RestaurantConfiguration", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Key")
-                        .IsUnique();
-
-                    b.ToTable("RestaurantConfigurations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Capacità massima per fascia oraria",
-                            Key = "MaxCapacityPerSlot",
-                            Value = "50"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Orari pranzo disponibili",
-                            Key = "LunchTimes",
-                            Value = "12:00,12:30,13:00,13:30,14:00"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Orari cena disponibili",
-                            Key = "DinnerTimes",
-                            Value = "19:00,19:30,20:00,20:30,21:00,21:30,22:00"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Nome del ristorante",
-                            Key = "RestaurantName",
-                            Value = "Roma Antica"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "Telefono ristorante",
-                            Key = "RestaurantPhone",
-                            Value = "+39 02 1234567"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "Email ristorante",
-                            Key = "RestaurantEmail",
-                            Value = "info@romaantica.it"
-                        });
                 });
 
             modelBuilder.Entity("DataAccess.Models.Booking", b =>

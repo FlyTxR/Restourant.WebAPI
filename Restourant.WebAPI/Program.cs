@@ -1,7 +1,8 @@
-using Business.Services;
+﻿using Business.Services;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Diagnostics;
+using Business.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,16 +13,20 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<SqlContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register Singleton Settings ← AGGIUNGI QUESTA RIGA
+builder.Services.AddSingleton<RestaurantSettings>();
+
 // Register application services
 builder.Services.AddScoped<MenuItemService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<BookingService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Angular dev server
+        policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -41,6 +46,16 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+// Load settings from database on startup
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<SqlContext>();
+    var settings = scope.ServiceProvider.GetRequiredService<RestaurantSettings>();
+
+    await settings.LoadFromDatabaseAsync(context);
+    Console.WriteLine("✅ Configurazione caricata dal database");
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
